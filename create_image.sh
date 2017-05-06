@@ -11,12 +11,13 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 # Dev tools
-sudo yum install -y java-1.7.0-openjdk-devel gcc gcc-c++ ant git
+#sudo yum install -y java-1.7.0-openjdk-devel gcc gcc-c++ ant git
+sudo yum install -y gcc gcc-c++ ant git
 # Perf tools
 sudo yum install -y dstat iotop strace sysstat htop perf
 sudo debuginfo-install -q -y glibc
 sudo debuginfo-install -q -y kernel
-sudo yum --enablerepo='*-debug*' install -q -y java-1.7.0-openjdk-debuginfo.x86_64
+#sudo yum --enablerepo='*-debug*' install -q -y java-1.7.0-openjdk-debuginfo.x86_64
 
 # PySpark and MLlib deps
 sudo yum install -y  python-matplotlib python-tornado scipy libgfortran
@@ -45,6 +46,16 @@ for x in {1..23}; do
   echo " - [ ephemeral$x, /mnt$((x + 1)), auto, "\
     "\"defaults,noatime\", \"0\", \"0\" ]" >> /etc/cloud/cloud.cfg
 done
+
+# Install java 8 (from Oracle)
+cd /tmp
+wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-linux-x64.rpm"
+sudo yum localinstall -y jdk-8u131-linux-x64.rpm
+rm jdk-8u131-linux-x64.rpm
+
+# Install sbt
+curl https://bintray.com/sbt/rpm/rpm | sudo tee /etc/yum.repos.d/bintray-sbt-rpm.repo
+sudo yum install -y sbt
 
 # Install Maven (for Hadoop)
 cd /tmp

@@ -51,7 +51,7 @@ else:
     raw_input = input
     xrange = range
 
-SPARK_EC2_VERSION = "2.0.0"
+SPARK_EC2_VERSION = "2.1.1"
 SPARK_EC2_DIR = os.path.dirname(os.path.realpath(__file__))
 
 VALID_SPARK_VERSIONS = set([
@@ -83,7 +83,8 @@ VALID_SPARK_VERSIONS = set([
     "2.0.0",
     "2.0.1",
     "2.0.2",
-    "2.1.0"
+    "2.1.0",
+    "2.1.1"
 ])
 
 SPARK_TACHYON_MAP = {
@@ -201,7 +202,7 @@ def parse_args():
         help="If you have multiple profiles (AWS or boto config), you can configure " +
              "additional, named profiles by using this option (default: %default)")
     parser.add_option(
-        "-t", "--instance-type", default="m1.large",
+        "-t", "--instance-type", default="m4.large",
         help="Type of instance to launch (default: %default). " +
              "WARNING: must be 64-bit; small instances won't work")
     parser.add_option(
@@ -349,19 +350,6 @@ def parse_args():
 
     # Boto config check
     # http://boto.cloudhackers.com/en/latest/boto_config_tut.html
-    home_dir = os.getenv('HOME')
-    if home_dir is None or not os.path.isfile(home_dir + '/.boto'):
-        if not os.path.isfile('/etc/boto.cfg'):
-            # If there is no boto config, check aws credentials
-            if not os.path.isfile(home_dir + '/.aws/credentials'):
-                if os.getenv('AWS_ACCESS_KEY_ID') is None:
-                    print("ERROR: The environment variable AWS_ACCESS_KEY_ID must be set",
-                          file=stderr)
-                    sys.exit(1)
-                if os.getenv('AWS_SECRET_ACCESS_KEY') is None:
-                    print("ERROR: The environment variable AWS_SECRET_ACCESS_KEY must be set",
-                          file=stderr)
-                    sys.exit(1)
     return (opts, action, cluster_name)
 
 
