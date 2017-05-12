@@ -15,7 +15,7 @@ for node in $SLAVES $OTHER_MASTERS; do
 done
 wait
 
-/root/spark-ec2/copy-dir $EPHEMERAL_HDFS/conf
+/root/spark-ec2/copy-dir $EPHEMERAL_HDFS/conf > /tmp/spark-ec2_hadoop.log
 
 NAMENODE_DIR=/mnt/ephemeral-hdfs/dfs/name
 
@@ -23,7 +23,7 @@ if [ -f "$NAMENODE_DIR/current/VERSION" ] && [ -f "$NAMENODE_DIR/current/fsimage
   echo "Hadoop namenode appears to be formatted: skipping"
 else
   echo "Formatting ephemeral HDFS namenode..."
-  $EPHEMERAL_HDFS/bin/hdfs namenode -format -force -nonInteractive
+  $EPHEMERAL_HDFS/bin/hdfs namenode -format -force -nonInteractive > /tmp/spark-ec2_hadoop.log
 fi
 
 echo "Starting ephemeral HDFS..."
@@ -31,15 +31,15 @@ echo "Starting ephemeral HDFS..."
 # This is different depending on version.
 case "$HADOOP_MAJOR_VERSION" in
   1)
-    $EPHEMERAL_HDFS/bin/start-dfs.sh
+    $EPHEMERAL_HDFS/bin/start-dfs.sh > /tmp/spark-ec2_hadoop.log
     ;;
   2)
-    $EPHEMERAL_HDFS/sbin/start-dfs.sh
+    $EPHEMERAL_HDFS/sbin/start-dfs.sh > /tmp/spark-ec2_hadoop.log
     ;;
   yarn)
-    $EPHEMERAL_HDFS/sbin/start-dfs.sh
+    $EPHEMERAL_HDFS/sbin/start-dfs.sh > /tmp/spark-ec2_hadoop.log
     echo "Starting YARN"
-    $EPHEMERAL_HDFS/sbin/start-yarn.sh
+    $EPHEMERAL_HDFS/sbin/start-yarn.sh > /tmp/spark-ec2_hadoop.log
     ;;
   *)
      echo "ERROR: Unknown Hadoop version"
